@@ -110,12 +110,12 @@ function animate()
 	
 	var dt = clock.getDelta()/10;
 
-	var x = 400*Math.cos(dt);
-	var z = 400*Math.sin(dt);
+	var x = 400*Math.cos(angle);
+	var z = 400*Math.sin(angle);
 	Earth.position.set (x,0,z);
 	
-	x = x+100*Math.cos(dt*12);
-	z = z+100*Math.sin(dt*12);
+	x = x+100*Math.cos(angle*12);
+	z = z+100*Math.sin(angle*12);
 	Moon.position.set(x,0,z);
 	
 
