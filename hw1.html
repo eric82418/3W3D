@@ -16,7 +16,9 @@
 <script src="js/stats.js "></script>
 <script src="js/OrbitControls.js"></script>
 <script src="js/Detector.js"></script>
-
+<audio id="soundtrack" autoplay loop style="display:none">
+<source src="music/DJ Sona Ethereal (Nosaj Thing x Pretty Lights).mp3" type='audio/mp3'>
+</audio>
 <script>
 
 var clock = new THREE.Clock();
@@ -30,6 +32,7 @@ animate();
 
 function init()
 {
+	soundTrack = document.getElementById ('soundtrack');
 	var width = window.innerWidth;
 	var height = window.innerHeight;
 
@@ -78,7 +81,7 @@ function init()
 
 	camera = new THREE.PerspectiveCamera (45, width/height, 0.1, 10000);
 	camera.position.y = 500;
-	camera.position.z = 1500;
+	camera.position.z = 1250;
 	camera.lookAt (new THREE.Vector3(0,0,0));
 
 	var skyboxGeometry = new THREE.BoxGeometry (7000,7000,7000);
@@ -86,8 +89,8 @@ function init()
 	var skybox = new THREE.Mesh (skyboxGeometry, skyboxMaterial);
 	scene.add (skybox);
 
-	//var gridXZ = new THREE.GridHelper(100, 10);
-	//gridXZ.setColors( new THREE.Color(0xff0000), new THREE.Color(0xffffff) );
+	var gridXZ = new THREE.GridHelper(100, 10);
+	gridXZ.setColors( new THREE.Color(0xff0000), new THREE.Color(0xffffff) );
 	//scene.add(gridXZ);
 
 	var pointLight = new THREE.PointLight (0xffffff);
