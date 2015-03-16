@@ -23,9 +23,12 @@
 
 var clock = new THREE.Clock();
 var scene, renderer, camera;
-var Earth,Sun,Moon;
+var Earth,Sun,Moon,fakeearth;
+//var controls, keyboard = new KeyboardState();
+//var turn = true;
 var angle = 0;
-var turn = 1;
+var turn=1;
+
 
 init();
 animate();
@@ -56,7 +59,8 @@ function init()
 	
 	var sunTexture = THREE.ImageUtils.loadTexture("images/photosun.jpg");
     	var earthTexture = THREE.ImageUtils.loadTexture("images/photoearth.jpg");
-    	var moonTexture = THREE.ImageUtils.loadTexture("images/photomoon.jpg");
+    	var moonTexture = THREE.ImageUtils.loadTexture("images/photomoon.jpg");	
+	var floorTexture = THREE.ImageUtils.loadTexture("images/skyfloor.jpg");
 	
 	var EarthGeometry = new THREE.SphereGeometry (36,36,36);
 	var EarthMaterial = new THREE.MeshLambertMaterial ({map:earthTexture});
@@ -64,6 +68,8 @@ function init()
 	var SunMaterial = new THREE.MeshLambertMaterial ({map:sunTexture});
 	var MoonGeometry = new THREE.SphereGeometry (17,17,17);
 	var MoonMaterial = new THREE.MeshLambertMaterial ({map:moonTexture});
+	var fakeearthGeometry = new THREE.SphereGeometry (1,1,1);
+	var fakeearthMaterial = new THREE.MeshLambertMaterial ({color:000000});
 	
 	Earth = new THREE.Mesh (EarthGeometry, EarthMaterial);
 	Earth.position.set (400, 0, 0);
@@ -74,18 +80,22 @@ function init()
 	Moon = new THREE.Mesh (MoonGeometry, MoonMaterial);
 	Moon.position.set (470, 0, 0);
 	
+	fakeearth = new THREE.Mesh (fakeearthGeometry, fakeearthMaterial);
+	fakeearth.position.set (400, 0, 0);
+	
 	
 	scene.add (Earth);
 	scene.add (Sun);
 	scene.add (Moon);
+	scene.add (fakeearth);
 
 	camera = new THREE.PerspectiveCamera (45, width/height, 0.1, 10000);
 	camera.position.y = 500;
 	camera.position.z = 1250;
 	camera.lookAt (new THREE.Vector3(0,0,0));
 
-	var skyboxGeometry = new THREE.BoxGeometry (7000,7000,7000);
-	var skyboxMaterial = new THREE.MeshBasicMaterial ({color: 0x1f1f1f, side:THREE.BackSide});
+	var skyboxGeometry = new THREE.BoxGeometry (5000,5000,5000);
+	var skyboxMaterial = new THREE.MeshBasicMaterial ({color:0x888888, side:THREE.BackSide});
 	var skybox = new THREE.Mesh (skyboxGeometry, skyboxMaterial);
 	scene.add (skybox);
 
@@ -106,30 +116,44 @@ function onWindowResize ()
 	camera.updateProjectionMatrix();
 	renderer.setSize (window.innerWidth, window.innerHeight);
 }
+//function toggleTurn ()
+//{
+//	turn = !turn;
+//}
 
 function animate()
 {
 	stats.update();
 	
-	var dt = clock.getDelta()/10;
-
+	var dt = clock.getDelta()/100;
+	
 	var x = 400*Math.cos(angle);
 	var z = 400*Math.sin(angle);
+	var fakex = 400*Math.cos(angle);
+	var fakez = 400*Math.sin(angle);
 	Earth.position.set (x,0,z);
+	fakeearth.position.set (fakex,0,fakez);
 	
-	x = x+100*Math.cos(angle*12);
-	z = z+100*Math.sin(angle*12);
-	Moon.position.set(x,0,z);
+	fakex = fakex+100*Math.cos(angle*12);
+	fakez = fakez+100*Math.sin(angle*12);
+	Moon.position.set(fakex,0,fakez);
 	
-
-	Earth.rotation.y -= 365*dt;
-	Moon.rotation.y -= 12*dt;
-	angle -= dt;
+	if(turn){
+		Earth.rotation.y -= 365*dt;
+		Moon.rotation.y += 12*dt;
+		angle -= dt;
+	}
 	
 	requestAnimationFrame ( animate );  
-	render();  
+	render(); 
+	//update() 
 }
-
+//function update()
+//{
+//	keyboard.update();
+//	if(keyboard.down("Z"))
+//		toggleTurn();
+//}
 
 function render()
 {
