@@ -11,12 +11,19 @@
 </head>
 
 <body>
-
+<div id="container"></div>
+<div id="info">
+     webgl tutorial 2 <br/>
+	 type <strong>z</strong> to toggle the spin<br/>
+	 (+ window resize)
+</div>
+<div id="angleInfo"> </div>
 <script src="js/r70/three.min.js"></script>
 <script src="js/stats.js "></script>
 <script src="js/OrbitControls.js"></script>
 <script src="js/Detector.js"></script>
 <audio id="soundtrack" autoplay loop style="display:none">
+<script src="js/KeyboardState.js"></script>
 <source src="music/DJ Sona Ethereal (Nosaj Thing x Pretty Lights).mp3" type='audio/mp3'>
 </audio>
 <script>
@@ -24,11 +31,11 @@
 var clock = new THREE.Clock();
 var scene, renderer, camera;
 var Earth,Sun,Moon,fakeearth;
-//var controls, keyboard = new KeyboardState();
-//var turn = true;
+var controls, keyboard = new KeyboardState();
+var turn = true;
 var angle = 0;
-var turn=1;
-
+//var turn = 1;
+var angleInfoEle;
 
 init();
 animate();
@@ -38,7 +45,8 @@ function init()
 	soundTrack = document.getElementById ('soundtrack');
 	var width = window.innerWidth;
 	var height = window.innerHeight;
-
+	
+	angleInfoEle = window.document.getElementById ('angleInfo');
 	// create and start the renderer; choose antialias setting.
 	if ( Detector.webgl )
 		renderer = new THREE.WebGLRenderer( {antialias:true} );
@@ -60,7 +68,7 @@ function init()
 	var sunTexture = THREE.ImageUtils.loadTexture("images/photosun.jpg");
     	var earthTexture = THREE.ImageUtils.loadTexture("images/photoearth.jpg");
     	var moonTexture = THREE.ImageUtils.loadTexture("images/photomoon.jpg");	
-	var floorTexture = THREE.ImageUtils.loadTexture("images/skyfloor.jpg");
+	var floorTexture = THREE.ImageUtils.loadTexture("images/starsky.jpg");
 	
 	var EarthGeometry = new THREE.SphereGeometry (36,36,36);
 	var EarthMaterial = new THREE.MeshLambertMaterial ({map:earthTexture});
@@ -89,13 +97,13 @@ function init()
 	scene.add (Moon);
 	scene.add (fakeearth);
 
-	camera = new THREE.PerspectiveCamera (45, width/height, 0.1, 10000);
-	camera.position.y = 500;
-	camera.position.z = 1250;
+	camera = new THREE.PerspectiveCamera (30, width/height, 0.1, 10000);
+	camera.position.y = 0;
+	camera.position.z = 1100;
 	camera.lookAt (new THREE.Vector3(0,0,0));
 
-	var skyboxGeometry = new THREE.BoxGeometry (5000,5000,5000);
-	var skyboxMaterial = new THREE.MeshBasicMaterial ({color:0x888888, side:THREE.BackSide});
+	var skyboxGeometry = new THREE.BoxGeometry (10000,10000,10000);
+	var skyboxMaterial = new THREE.MeshBasicMaterial ({map:floorTexture, side:THREE.BackSide});
 	var skybox = new THREE.Mesh (skyboxGeometry, skyboxMaterial);
 	scene.add (skybox);
 
@@ -104,7 +112,23 @@ function init()
 	//scene.add(gridXZ);
 
 	var pointLight = new THREE.PointLight (0xffffff);
-	pointLight.position.set (0,300,200);
+	var pointLight2 = new THREE.PointLight (0xffffff);
+	var pointLight3 = new THREE.PointLight (0xffffff);
+	var pointLight4 = new THREE.PointLight (0xffffff);
+	var pointLight5 = new THREE.PointLight (0xffffff);
+	var pointLight6 = new THREE.PointLight (0xffffff);
+	pointLight.position.set (251,0,0);
+	pointLight2.position.set (0,251,0);
+	pointLight3.position.set (0,0,251);
+	pointLight4.position.set (-251,0,0);
+	pointLight5.position.set (0,-251,0);
+	pointLight6.position.set (0,0,-251);
+
+	scene.add (pointLight6);
+	scene.add (pointLight5);
+	scene.add (pointLight4);
+	scene.add (pointLight3);
+	scene.add (pointLight2);
 	scene.add (pointLight);
 	
 	window.addEventListener ('resize', onWindowResize, false);
@@ -116,10 +140,10 @@ function onWindowResize ()
 	camera.updateProjectionMatrix();
 	renderer.setSize (window.innerWidth, window.innerHeight);
 }
-//function toggleTurn ()
-//{
-//	turn = !turn;
-//}
+function toggleTurn ()
+{
+	turn = !turn;
+}
 
 function animate()
 {
@@ -144,16 +168,18 @@ function animate()
 		angle -= dt;
 	}
 	
-	requestAnimationFrame ( animate );  
+	requestAnimationFrame ( animate );   
 	render(); 
-	//update() 
+	update();
+	
 }
-//function update()
-//{
-//	keyboard.update();
-//	if(keyboard.down("Z"))
-//		toggleTurn();
-//}
+function update()
+{	
+	keyboard.update();
+	if(keyboard.down("Z"))
+		toggleTurn();
+	angleInfoEle.innerHTML = angle;
+}
 
 function render()
 {
