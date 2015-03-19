@@ -2,10 +2,15 @@
 <html>
 <head>
 <style>
-	canvas {
+	
+	body{
 		position: fixed;
 		top: 0;
+		width: 100%;
 		left: 0;
+		padding: 20px;
+		text-align: center;
+		color: #ff0000
 	}
 </style>
 </head>
@@ -13,11 +18,9 @@
 <body>
 <div id="container"></div>
 <div id="info">
-     webgl tutorial 2 <br/>
-	 type <strong>z</strong> to toggle the spin<br/>
-	 (+ window resize)
-</div>
-<div id="angleInfo"> </div>
+	type <strong>Z</strong> to toggle the animate<br/>
+	type <strong>X</strong> to toggle the music<br/>	 
+</div> 
 <script src="js/r70/three.min.js"></script>
 <script src="js/stats.js "></script>
 <script src="js/OrbitControls.js"></script>
@@ -33,6 +36,7 @@ var scene, renderer, camera;
 var Earth,Sun,Moon,fakeearth;
 var controls, keyboard = new KeyboardState();
 var turn = true;
+var turn2 = true;
 var angle = 0;
 //var turn = 1;
 var angleInfoEle;
@@ -41,7 +45,7 @@ init();
 animate();
 
 function init()
-{
+{	
 	soundTrack = document.getElementById ('soundtrack');
 	var width = window.innerWidth;
 	var height = window.innerHeight;
@@ -57,11 +61,11 @@ function init()
 	document.body.appendChild (renderer.domElement);
 
 	// STATS
-	stats = new Stats();
+	/*stats = new Stats();
 	stats.domElement.style.position = 'absolute';
 	stats.domElement.style.top = '0px';
 	stats.domElement.style.zIndex = 100;
-	document.body.appendChild( stats.domElement );	
+	document.body.appendChild( stats.domElement );	*/
 
 	scene = new THREE.Scene();
 	
@@ -101,6 +105,9 @@ function init()
 	camera.position.y = 0;
 	camera.position.z = 1100;
 	camera.lookAt (new THREE.Vector3(0,0,0));
+	
+	controls = new THREE.OrbitControls (camera, renderer.domElement);
+	
 
 	var skyboxGeometry = new THREE.BoxGeometry (10000,10000,10000);
 	var skyboxMaterial = new THREE.MeshBasicMaterial ({map:floorTexture, side:THREE.BackSide});
@@ -144,10 +151,14 @@ function toggleTurn ()
 {
 	turn = !turn;
 }
+function toggleTurn2 ()
+{
+	turn2 = !turn2;
+}
 
 function animate()
 {
-	stats.update();
+	//stats.update();
 	
 	var dt = clock.getDelta()/100;
 	
@@ -178,6 +189,12 @@ function update()
 	keyboard.update();
 	if(keyboard.down("Z"))
 		toggleTurn();
+	if(keyboard.down("X"))
+		toggleTurn2();
+	if(turn2)
+		soundtrack.play();
+	else
+		soundtrack.pause();
 	angleInfoEle.innerHTML = angle;
 }
 
