@@ -25,9 +25,11 @@
 <script src="js/stats.js "></script>
 <script src="js/OrbitControls.js"></script>
 <script src="js/Detector.js"></script>
-<audio id="soundtrack" autoplay loop style="display:none">
 <script src="js/KeyboardState.js"></script>
-<source src="" type='audio/mp3'>
+<audio id="soundtrack" style="display:none">
+<source src="music/slowopen.wav" type='audio/wav'>
+<audio id="soundtrack2" style="display:none">
+<source src="music/dooropen.WAV" type='audio/wav'>
 </audio>
 <script>
 
@@ -47,8 +49,10 @@ animate();
 
 function init()
 {	
+	
 	soundTrack = document.getElementById ('soundtrack');
-	soundtrack.pause();
+	soundTrack2 = document.getElementById ('soundtrack');
+	
 	var width = window.innerWidth;
 	var height = window.innerHeight;
 	
@@ -194,16 +198,26 @@ function animate()
 {
 	//stats.update();
 	if(!turn && angle>=-1.57){
-		var dt = 0.1;
+		if(angle>=-0.1 )
+			soundtrack2.play();
+		var dt = 0.01;
 		Doorshaft.rotation.y += dt;
 		Doorshaft2.rotation.y += dt;
 		angle -= dt;
-	}else if(turn && angle<-0.1)
+		soundtrack.play();
+		if(angle<=-1.57 )
+			soundtrack.pause();
+	}else if(turn && angle<-0)
 	{
-		var dt = -0.1;
+		soundtrack.play();
+		var dt = -0.01;
 		Doorshaft.rotation.y += dt;
 		Doorshaft2.rotation.y += dt;
 		angle -= dt;
+		if(angle>-0 )
+			soundtrack.pause();
+		if(angle>=-0.1 )
+			soundtrack2.play();
 	}
 	
 	requestAnimationFrame ( animate );   
@@ -218,10 +232,7 @@ function update()
 		toggleTurn();
 	if(keyboard.down("X"))
 		toggleTurn2();
-	if(turn2)
-		soundtrack.play();
-	else
-		soundtrack.pause();
+	
 	angleInfoEle.innerHTML = angle;
 }
 
