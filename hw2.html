@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+	
+	body{
+		position: fixed;
+		top: 0;
+		width: 100%;
+		left: 0;
+		padding: 20px;
+		text-align: center;
+		color: #ff0000
+	}
+</style>
+</head>
+
+<body>
+<div id="container"></div>
+<div id="info">
+	type <strong>Z</strong> to toggle the animate<br/>
+	type <strong>X</strong> to toggle the music<br/>	 
+</div> 
+<script src="js/r70/three.min.js"></script>
+<script src="js/stats.js "></script>
+<script src="js/OrbitControls.js"></script>
+<script src="js/Detector.js"></script>
+<audio id="soundtrack" autoplay loop style="display:none">
+<script src="js/KeyboardState.js"></script>
+<source src="" type='audio/mp3'>
+</audio>
+<script>
+
+var clock = new THREE.Clock();
+var scene, renderer, camera;
+var Door,Doorframe,Doorframe2,Doorframe3;
+var Doorshaft,Doorshaft2,Doorshaft3,Doorshaft4,Doorshaft5,Doorshaft6;
+var controls, keyboard = new KeyboardState();
+var turn = true;
+var turn2 = true;
+var angle = 0;
+//var turn = 1;
+var angleInfoEle;
+
+init();
+animate();
+
+function init()
+{	
+	soundTrack = document.getElementById ('soundtrack');
+	soundtrack.pause();
+	var width = window.innerWidth;
+	var height = window.innerHeight;
+	
+	angleInfoEle = window.document.getElementById ('angleInfo');
+	// create and start the renderer; choose antialias setting.
+	if ( Detector.webgl )
+		renderer = new THREE.WebGLRenderer( {antialias:true} );
+	else
+		renderer = new THREE.CanvasRenderer(); 	
+
+	renderer.setSize (width, height);
+	document.body.appendChild (renderer.domElement);
+
+	// STATS
+	/*stats = new Stats();
+	stats.domElement.style.position = 'absolute';
+	stats.domElement.style.top = '0px';
+	stats.domElement.style.zIndex = 100;
+	document.body.appendChild( stats.domElement );	*/
+
+	scene = new THREE.Scene();
+	
+	var toolTexture = THREE.ImageUtils.loadTexture("images/tool.jpg");
+    var tool2Texture = THREE.ImageUtils.loadTexture("images/tool2.jpg");
+	var FeTexture = THREE.ImageUtils.loadTexture("images/Fe.jpg");
+	var floorTexture = THREE.ImageUtils.loadTexture("images/starsky.jpg");
+	
+	var EarthGeometry = new THREE.BoxGeometry (36,72,5);
+	var EarthMaterial = new THREE.MeshLambertMaterial ({map:toolTexture});
+	var DoorframeGeometry = new THREE.BoxGeometry (5,75,5);
+	var DoorframeMaterial = new THREE.MeshLambertMaterial ({map:toolTexture});
+	var Doorframe2Geometry = new THREE.BoxGeometry (5,75,5);
+	var Doorframe2Material = new THREE.MeshLambertMaterial ({map:toolTexture});
+	var Doorframe3Geometry = new THREE.BoxGeometry (47,5,5);
+	var Doorframe3Material = new THREE.MeshLambertMaterial ({map:tool2Texture});
+	var DoorshaftGeometry = new THREE.CylinderGeometry (1,1,8,32);
+	var DoorshaftMaterial = new THREE.MeshLambertMaterial ({map:FeTexture});
+	var Doorshaft2Geometry = new THREE.CylinderGeometry (1,1,8,32);
+	var Doorshaft2Material = new THREE.MeshLambertMaterial ({map:FeTexture});
+	var Doorshaft3Geometry = new THREE.BoxGeometry (1,8,4);
+	var Doorshaft3Material = new THREE.MeshLambertMaterial ({map:FeTexture});
+	var Doorshaft4Geometry = new THREE.BoxGeometry (1,8,4);
+	var Doorshaft4Material = new THREE.MeshLambertMaterial ({map:FeTexture});
+	var Doorshaft5Geometry = new THREE.BoxGeometry (1,8,4);
+	var Doorshaft5Material = new THREE.MeshLambertMaterial ({map:FeTexture});
+	var Doorshaft6Geometry = new THREE.BoxGeometry (1,8,4);
+	var Doorshaft6Material = new THREE.MeshLambertMaterial ({map:FeTexture});
+	
+	Door = new THREE.Mesh (EarthGeometry, EarthMaterial);
+	Door.position.set (18.5, -25, 4);
+	
+	Doorframe = new THREE.Mesh (DoorframeGeometry, DoorframeMaterial);
+	Doorframe.position.set (0, 0, 0);
+	
+	Doorframe2 = new THREE.Mesh (Doorframe2Geometry, Doorframe2Material);
+	Doorframe2.position.set (42, 0, 0);
+	
+	Doorframe3 = new THREE.Mesh (Doorframe3Geometry, Doorframe3Material);
+	Doorframe3.position.set (21, 40, 0);
+	
+	Doorshaft = new THREE.Mesh (DoorshaftGeometry, DoorshaftMaterial);
+	Doorshaft.position.set (2.5,25, -4);
+	
+	Doorshaft2 = new THREE.Mesh (Doorshaft2Geometry, Doorshaft2Material);
+	Doorshaft2.position.set (2.5,-25, -4);
+	
+	Doorshaft3 = new THREE.Mesh (Doorshaft3Geometry, Doorshaft3Material);
+	Doorshaft3.position.set (0.5,0,3);
+	
+	Doorshaft4 = new THREE.Mesh (Doorshaft4Geometry, Doorshaft4Material);
+	Doorshaft4.position.set (2.2,25, -1);
+	
+	Doorshaft5 = new THREE.Mesh (Doorshaft5Geometry, Doorshaft5Material);
+	Doorshaft5.position.set (0.5,0,3);
+	
+	Doorshaft6 = new THREE.Mesh (Doorshaft6Geometry, Doorshaft6Material);
+	Doorshaft6.position.set (2.2,-25, -1);
+	
+	Doorshaft.add (Door);
+	Doorshaft.add (Doorshaft3);
+	scene.add (Doorshaft4);
+	Doorshaft2.add (Doorshaft5);
+	scene.add (Doorshaft6);
+	scene.add (Doorframe);
+	scene.add (Doorframe2);
+	scene.add (Doorframe3);
+	scene.add (Doorshaft);
+	scene.add (Doorshaft2);
+
+
+	camera = new THREE.PerspectiveCamera (30, width/height, 0.1, 10000);
+	camera.position.y = 0;
+	camera.position.z = 1100;
+	camera.lookAt (new THREE.Vector3(0,0,0));
+	
+	controls = new THREE.OrbitControls (camera, renderer.domElement);
+	
+
+	var skyboxGeometry = new THREE.BoxGeometry (10000,10000,10000);
+	var skyboxMaterial = new THREE.MeshBasicMaterial ({map:floorTexture, side:THREE.BackSide});
+	var skybox = new THREE.Mesh (skyboxGeometry, skyboxMaterial);
+	scene.add (skybox);
+
+	var gridXZ = new THREE.GridHelper(100, 10);
+	gridXZ.setColors( new THREE.Color(0xff0000), new THREE.Color(0xffffff) );
+	//scene.add(gridXZ);
+
+	var pointLight = new THREE.PointLight (0xffffff);
+	pointLight.position.set (0,251,0);
+	scene.add (pointLight);
+	var pointLight1 = new THREE.PointLight (0xffffff);
+	pointLight1.position.set (251,0,0);
+	scene.add (pointLight1);
+	var pointLight2 = new THREE.PointLight (0xffffff);
+	pointLight2.position.set (0,0,251);
+	scene.add (pointLight2);
+	var pointLight3 = new THREE.PointLight (0xffffff);
+	pointLight3.position.set (-251,0,0);
+	scene.add (pointLight3);
+	var pointLight4 = new THREE.PointLight (0xffffff);
+	pointLight4.position.set (0,0,-251);
+	scene.add (pointLight4);
+	
+	window.addEventListener ('resize', onWindowResize, false);
+}
+
+function onWindowResize ()
+{
+	camera.aspect = window.innerWidth / window.innerHeight;
+	camera.updateProjectionMatrix();
+	renderer.setSize (window.innerWidth, window.innerHeight);
+}
+function toggleTurn ()
+{
+	turn = !turn;
+}
+function toggleTurn2 ()
+{
+	turn2 = !turn2;
+}
+
+function animate()
+{
+	//stats.update();
+	if(!turn && angle>=-1.57){
+		var dt = 0.1;
+		Doorshaft.rotation.y += dt;
+		Doorshaft2.rotation.y += dt;
+		angle -= dt;
+	}else if(turn && angle<-0.1)
+	{
+		var dt = -0.1;
+		Doorshaft.rotation.y += dt;
+		Doorshaft2.rotation.y += dt;
+		angle -= dt;
+	}
+	
+	requestAnimationFrame ( animate );   
+	render(); 
+	update();
+	
+}
+function update()
+{	
+	keyboard.update();
+	if(keyboard.down("Z"))
+		toggleTurn();
+	if(keyboard.down("X"))
+		toggleTurn2();
+	if(turn2)
+		soundtrack.play();
+	else
+		soundtrack.pause();
+	angleInfoEle.innerHTML = angle;
+}
+
+function render()
+{
+	renderer.render (scene, camera);
+}
+
+
+</script>
+</body>
+
+</html>
