@@ -26,6 +26,7 @@
 <script src="js/OrbitControls.js"></script>
 <script src="js/Detector.js"></script>
 <script src="js/KeyboardState.js"></script>
+ <script src="js/dat.gui.min.js"></script>
 <audio id="soundtrack" style="display:none">
 <source src="music/slowopen.wav" type='audio/wav'>
 <audio id="soundtrack2" style="display:none">
@@ -37,6 +38,7 @@ var clock = new THREE.Clock();
 var scene, renderer, camera;
 var Door,Doorframe,Doorframe2,Doorframe3;
 var Doorshaft,Doorshaft2,Doorshaft3,Doorshaft4,Doorshaft5,Doorshaft6;
+var Doorhandle,Doorhandle2,Doorhandle3;
 var controls, keyboard = new KeyboardState();
 var turn = true;
 var turn2 = true;
@@ -80,8 +82,12 @@ function init()
 	var FeTexture = THREE.ImageUtils.loadTexture("images/Fe.jpg");
 	var floorTexture = THREE.ImageUtils.loadTexture("images/starsky.jpg");
 	
-	var EarthGeometry = new THREE.BoxGeometry (36,72,5);
-	var EarthMaterial = new THREE.MeshLambertMaterial ({map:toolTexture});
+	//var bump = THREE.ImageUtils.loadTexture("images/" + "toolplus.png")
+	//mat.bumpMap = bump;
+	//mat.bumpScale = 0.2;
+	
+	var DoorGeometry = new THREE.BoxGeometry (36,72,5);
+	var DoorMaterial = new THREE.MeshLambertMaterial ({map:toolTexture});
 	var DoorframeGeometry = new THREE.BoxGeometry (5,75,5);
 	var DoorframeMaterial = new THREE.MeshLambertMaterial ({map:toolTexture});
 	var Doorframe2Geometry = new THREE.BoxGeometry (5,75,5);
@@ -100,8 +106,14 @@ function init()
 	var Doorshaft5Material = new THREE.MeshLambertMaterial ({map:FeTexture});
 	var Doorshaft6Geometry = new THREE.BoxGeometry (1,8,4);
 	var Doorshaft6Material = new THREE.MeshLambertMaterial ({map:FeTexture});
+	var DoorhandleGeometry = new THREE.CylinderGeometry (1,1,10,32);
+	var DoorhandleMaterial = new THREE.MeshLambertMaterial ({map:FeTexture});
+	var Doorhandle2Geometry = new THREE.BoxGeometry (8,1,2);
+	var Doorhandle2Material = new THREE.MeshLambertMaterial ({map:FeTexture});
+	var Doorhandle3Geometry = new THREE.BoxGeometry (8,1,2);
+	var Doorhandle3Material = new THREE.MeshLambertMaterial ({map:FeTexture});
 	
-	Door = new THREE.Mesh (EarthGeometry, EarthMaterial);
+	Door = new THREE.Mesh (DoorGeometry, DoorMaterial);
 	Door.position.set (18.5, -25, 4);
 	
 	Doorframe = new THREE.Mesh (DoorframeGeometry, DoorframeMaterial);
@@ -131,6 +143,15 @@ function init()
 	Doorshaft6 = new THREE.Mesh (Doorshaft6Geometry, Doorshaft6Material);
 	Doorshaft6.position.set (2.2,-25, -1);
 	
+	Doorhandle = new THREE.Mesh (DoorhandleGeometry, DoorhandleMaterial);
+	Doorhandle.position.set (14,3, 0);
+	
+	Doorhandle2 = new THREE.Mesh (Doorhandle2Geometry, Doorhandle2Material);
+	Doorhandle2.position.set (-3,5, 0);
+	
+	Doorhandle3 = new THREE.Mesh (Doorhandle3Geometry, Doorhandle3Material);
+	Doorhandle3.position.set (-3,-5, 0);
+	
 	Doorshaft.add (Door);
 	Doorshaft.add (Doorshaft3);
 	scene.add (Doorshaft4);
@@ -141,6 +162,10 @@ function init()
 	scene.add (Doorframe3);
 	scene.add (Doorshaft);
 	scene.add (Doorshaft2);
+	Door.add (Doorhandle);
+	Doorhandle.add (Doorhandle2);
+	Doorhandle.add (Doorhandle3);
+	Doorhandle.rotation.x = 1.57;
 
 
 	camera = new THREE.PerspectiveCamera (30, width/height, 0.1, 10000);
@@ -203,6 +228,10 @@ function animate()
 		var dt = 0.01;
 		Doorshaft.rotation.y += dt;
 		Doorshaft2.rotation.y += dt;
+		if(angle<=0 && angle>=-0.2)
+			Doorhandle.rotation.y =0.7;
+		else
+			Doorhandle.rotation.y=0;
 		angle -= dt;
 		soundtrack.play();
 		if(angle<=-1.57 )
@@ -216,8 +245,12 @@ function animate()
 		angle -= dt;
 		if(angle>-0 )
 			soundtrack.pause();
-		if(angle>=-0.1 )
+		if(angle>=-0.2 )
 			soundtrack2.play();
+		if(angle<=0 && angle>=-0.2)
+			Doorhandle.rotation.y =0.7;
+		else
+			Doorhandle.rotation.y=0;
 	}
 	
 	requestAnimationFrame ( animate );   
