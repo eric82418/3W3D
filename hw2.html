@@ -40,6 +40,7 @@ var Door,Doorframe,Doorframe2,Doorframe3;
 var Doorshaft,Doorshaft2,Doorshaft3,Doorshaft4,Doorshaft5,Doorshaft6;
 var Doorhandle,Doorhandle2,Doorhandle3;
 var controls, keyboard = new KeyboardState();
+var floor;
 var turn = true;
 var turn2 = true;
 var angle = 0;
@@ -81,10 +82,10 @@ function init()
     var tool2Texture = THREE.ImageUtils.loadTexture("images/tool2.jpg");
 	var FeTexture = THREE.ImageUtils.loadTexture("images/Fe.jpg");
 	var floorTexture = THREE.ImageUtils.loadTexture("images/starsky.jpg");
-	
+	var floor2Texture = THREE.ImageUtils.loadTexture("images/floorwoof.jpg");
 	//var bump = THREE.ImageUtils.loadTexture("images/" + "toolplus.png")
-	//mat.bumpMap = bump;
-	//mat.bumpScale = 0.2;
+	//Door.bumpMap = bump;
+	//Door.bumpScale = 0.2;
 	
 	var DoorGeometry = new THREE.BoxGeometry (36,72,5);
 	var DoorMaterial = new THREE.MeshLambertMaterial ({map:toolTexture});
@@ -112,6 +113,8 @@ function init()
 	var Doorhandle2Material = new THREE.MeshLambertMaterial ({map:FeTexture});
 	var Doorhandle3Geometry = new THREE.BoxGeometry (8,1,2);
 	var Doorhandle3Material = new THREE.MeshLambertMaterial ({map:FeTexture});
+	var floorGeometry = new THREE.BoxGeometry (100,1,100);
+	var floorMaterial = new THREE.MeshLambertMaterial ({map:floor2Texture});
 	
 	Door = new THREE.Mesh (DoorGeometry, DoorMaterial);
 	Door.position.set (18.5, -25, 4);
@@ -152,6 +155,9 @@ function init()
 	Doorhandle3 = new THREE.Mesh (Doorhandle3Geometry, Doorhandle3Material);
 	Doorhandle3.position.set (-3,-5, 0);
 	
+	floor = new THREE.Mesh (floorGeometry, floorMaterial);
+	floor.position.set (18,-37.5, 0);
+	
 	Doorshaft.add (Door);
 	Doorshaft.add (Doorshaft3);
 	scene.add (Doorshaft4);
@@ -166,6 +172,7 @@ function init()
 	Doorhandle.add (Doorhandle2);
 	Doorhandle.add (Doorhandle3);
 	Doorhandle.rotation.x = 1.57;
+	scene.add (floor);
 
 
 	camera = new THREE.PerspectiveCamera (30, width/height, 0.1, 10000);
