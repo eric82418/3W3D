@@ -229,22 +229,7 @@ function update()
 	//angleInfoEle.innerHTML = angle;
 }
 
-function createMesh(geom, imageFile, bump) 
-{ 
-	geom.computeVertexNormals(); 
-	var mat = new THREE.MeshPhongMaterial(); 
-	var texture = THREE.ImageUtils.loadTexture("images/" + imageFile); 
-	mat.map = texture; 
-	if (bump) 
-	{ 	
-		var bump = THREE.ImageUtils.loadTexture("images/" + bump); 
-		mat.bumpMap = bump; 
-		mat.bumpScale = 1;
-	} 
-	var mesh = new THREE.Mesh(geom, mat); 
-	return mesh; 
-}
-
+ 
 function render()
 {
 	renderer.render (scene, camera);
