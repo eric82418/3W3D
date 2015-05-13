@@ -38,15 +38,15 @@ body {
 
     
 
-<script src="http://cdnjs.cloudflare.com/ajax/libs/three.js/r70/three.min.js"></script>
-<script src="https://dl.dropboxusercontent.com/u/3587259/Code/Threejs/OrbitControls.js">
+<script src="js/r70/three.min.js"></script>
+<script src="js/OrbitControls.js">
     
 </script>
 
 <script>
 
 
-var camera, scene, renderer,light,light2,light3, controls;
+var camera, scene, renderer,light,light2,light3,light4,midlight,controls;
 var geometrypic, materialpic, meshpic,geometrypic2, materialpic2, meshpic2,geometrypic3, materialpic3, meshpic3,geometrypic4, materialpic4, meshpic4;
 var geometrywell, materialwell, meshwell,geometrywell2, materialwell2, meshwell2,geometrywell3, materialwell3, meshwell3 ;
 var floorgeometry, floormaterial, floormesh;
@@ -73,7 +73,7 @@ function init() {
   
 	camera.position.y = 250;
 	camera.position.z = 500;
-	camera.position.x = -250;
+	
     scene.add(camera);
 
     //////////////////////////////////////////////////////
@@ -84,78 +84,98 @@ function init() {
     tex4 = THREE.ImageUtils.loadTexture('images/picture_well4.JPG');
     welltex = THREE.ImageUtils.loadTexture('images/well.jpg');
 	floortex = THREE.ImageUtils.loadTexture('images/floorwoof.jpg');
-	geometrypic = new THREE.PlaneGeometry(50, 34);
+	
+	geometrypic = new THREE.PlaneGeometry(150, 102);
     materialpic = new THREE.MeshLambertMaterial({ color: 0xffffff ,polygonOffset: true,polygonOffsetUnits: -4.0,polygonOffsetFactor: -1.0});
 
     meshpic = new THREE.Mesh(geometrypic, materialpic);
 	meshpic.position.set(0,0,0);
-    
+	meshpic.rotation.x = -1.57;
 	
-	
-	geometrypic2 = new THREE.PlaneGeometry(50, 34);
+	geometrypic2 = new THREE.PlaneGeometry(150, 102);
     materialpic2 = new THREE.MeshLambertMaterial({color: 0xffffff ,polygonOffset: true,polygonOffsetUnits: -4.0,polygonOffsetFactor: -1.0});
 
     meshpic2 = new THREE.Mesh(geometrypic2, materialpic2);
 	meshpic2.position.set(0,0,0);
-
+	meshpic2.rotation.x = -1.57;
 	
-	geometrypic3 = new THREE.PlaneGeometry(50, 34);
+	geometrypic3 = new THREE.PlaneGeometry(150, 102);
     materialpic3 = new THREE.MeshLambertMaterial({color: 0xffffff ,polygonOffset: true,polygonOffsetUnits: -4.0,polygonOffsetFactor: -1.0});
 
     meshpic3 = new THREE.Mesh(geometrypic3, materialpic3);
 	meshpic3.position.set(0,0,0);
-   
-	
-	geometrypic4 = new THREE.PlaneGeometry(50, 34);
+	meshpic3.rotation.x = -1.57;
+
+	geometrypic4 = new THREE.PlaneGeometry(150, 102);
     materialpic4 = new THREE.MeshLambertMaterial({color: 0xffffff ,polygonOffset: true,polygonOffsetUnits: -4.0,polygonOffsetFactor: -1.0});
 
     meshpic4 = new THREE.Mesh(geometrypic4, materialpic4);
 	meshpic4.position.set(0,0,0);
-   
+	meshpic4.rotation.x = -1.57;
 
-	geometrywell = new THREE.BoxGeometry(100, 100,8);
+	geometrywell = new THREE.BoxGeometry(200, 200,8);
     materialwell = new THREE.MeshLambertMaterial({map:welltex});
 	
 	meshwell = new THREE.Mesh(geometrywell, materialwell);
-	meshwell.position.set(-0,50,57);
+	meshwell.position.set(-200,100,150);
 	meshwell.rotation.y = 1.57;
     scene.add(meshwell);
 	
-	geometrywell2 = new THREE.BoxGeometry(200, 100,8);
+	geometrywell2 = new THREE.BoxGeometry(500, 200,8);
     materialwell2 = new THREE.MeshLambertMaterial({map:welltex});
 	
 	meshwell2 = new THREE.Mesh(geometrywell2, materialwell2);
-	meshwell2.position.set(0,50,-54);
+	meshwell2.position.set(0,100,-100);
     scene.add(meshwell2);
 	
-	geometrywell3 = new THREE.BoxGeometry(150, 100,8);
+	geometrywell3 = new THREE.BoxGeometry(350, 200,8);
     materialwell3 = new THREE.MeshLambertMaterial({map:welltex});
 	
 	meshwell3 = new THREE.Mesh(geometrywell3, materialwell3);
-	meshwell3.position.set(100,50,17);
+	meshwell3.position.set(240,100,50);
 	meshwell3.rotation.y = 1.57;
     scene.add(meshwell3);
 	
-	floorgeometry = new THREE.BoxGeometry(250, 250,2);
+	floorgeometry = new THREE.BoxGeometry(500, 500,2);
     floormaterial = new THREE.MeshLambertMaterial({map:floortex});
 	
 	floormesh = new THREE.Mesh(floorgeometry, floormaterial);
 	floormesh.rotation.x = -1.57;
-    scene.add(floormesh);
+    scene.add(floormesh);	
+
+	midlight = new THREE.PointLight(0xffffff,0.5);
+    midlight.position.set(100, 300, 200);
+    scene.add(midlight);
 	
-	light = new THREE.PointLight(0xffffff,0.5);
-    light.position.set(100, 300, 200);
+	light = new THREE.SpotLight(0xffffff,2.0);
+    light.position.set(0,250,0);
+	light.angle = Math.PI/3 ;
+    light.target = meshpic;
     scene.add(light);
 	
-    light2 = new THREE.PointLight(0xffffff,0.5);
-    light2.position.set(-100, 300, 200);
+    light2 = new THREE.SpotLight(0xffffff,2.0);
+    light2.position.set(0,250,0);
+	light2.angle = Math.PI/3;
+    light2.target = meshpic2;
     scene.add(light2);
 	
-	pickables = [meshwell,meshwell2,meshwell3];
+	light3 = new THREE.SpotLight(0xffffff,2.0);
+    light3.position.set(0,250,0);
+	light3.angle = Math.PI / 3;
+    light3.target = meshpic3;
+    scene.add(light3);
 	
-   
+    light4 = new THREE.SpotLight(0xffffff,2.0);
+    light4.position.set(0,250,0);
+	light4.angle = Math.PI / 3;
+    light4.target = meshpic4;
+    scene.add(light4);/**/
+	
+	pickables = [meshwell,meshwell2,meshwell3];
 
     controls = new THREE.OrbitControls(camera, renderer.domElement);
+
+	
 
     // the following is not needed for "embed" mode
     document.body.appendChild(renderer.domElement);
