@@ -19,6 +19,7 @@
      
 	 type <strong>up</strong> <strong>down</strong> <strong>left</strong> <strong>right</strong> to control the car<br/>
 	 type <strong>S</strong> to stop the car<br/>
+	 click <a href="javascript:click();">here</a> to change view<br/>
 	
 </div>
 <div id="angleInfo"> </div>
@@ -41,7 +42,7 @@ var sceneHUD, cameraHUD;
 var barA, barB;
 var pilot,pilotbody,pilotfood,pilotfood2,pilothand,pilothand2;
 var jsonModel;
-
+var check=true;
 init();
 animate();
 function initHUD() {
@@ -80,11 +81,7 @@ function init() {
 	initHUD();
     scene = new THREE.Scene();
 
-    camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 10000);
-  
-	camera.position.y = 250;
-	camera.position.z = 500;
-    scene.add(camera);
+    
 
     THREE.ImageUtils.crossOrigin = '';
     var colormap = THREE.ImageUtils.loadTexture('images/Tire.png');
@@ -237,15 +234,23 @@ function init() {
     renderer.setClearColor(0x888888);
 	renderer.shadowMapEnabled = true;
     renderer.shadowMapType = THREE.PCFShadowMap;
+	camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 10000);
+  
 	
-    controls = new THREE.OrbitControls(camera, renderer.domElement);
+		camera.position.y = 250;
+		camera.position.z = 500;
+		scene.add(camera);
+		controls = new THREE.OrbitControls(camera, renderer.domElement);
 	
 	var jsonLoader = new THREE.JSONLoader();
     jsonLoader.load("http://jyunming-chen.github.io/tutsplus/models/android.json", addModelToScene);
 	
     document.body.appendChild(renderer.domElement);
 }
-
+function click()
+{
+	check=!check;
+}
 function addModelToScene(geometry3, materials3) {
     var material3 = new THREE.MeshFaceMaterial(materials3);
     jsonModel = new THREE.Mesh(geometry3, material3);
@@ -345,6 +350,13 @@ function createMesh(geom, imageFile, bump)
 
 
 function render() {
+	if(check){
+	
+	
+	}else{
+		
+		//camera.rotation.z=0.3;		
+	}
     renderer.render(scene, camera);
 }
 

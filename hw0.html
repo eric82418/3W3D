@@ -2,90 +2,140 @@
 <html>
 <head>
 <style>
-	canvas {
-		position: fixed;
-		top: 0;
-		left: 0;
-	}
+#container {
+    width:60%;
+    float:left;
+    background-color:pink;
+   margin-top: 5px;
+}
+#cnvsFrame {
+    height: 0;
+    padding-bottom:100%;
+}
+
+.fl {
+    float:left;
+    margin:20px;
+}
+.flc {
+    float:right;
+    margin:5px;
+    width:30%;
+}
+body {
+    overflow: auto;
+}
 </style>
 </head>
 
-<body>
-<script src="js/r70/three.min.js"></script>
-<script src="js/OrbitControls.js">
+<h1> Lipsum Generator </h1>
+Ref: <a href="https://css-tricks.com/video-screencasts/42-all-about-floats-screencast/">Screen cast about floats</a>
+<hr>
+<div id="container">
+<div id="cnvsFrame">
+    <canvas id="cnvs"> </canvas>
+</div>
+</div>
+
+    <img src="http://i.imgur.com/SioC0Bw.png" class="flc" onclick="javascript:tst(1);" />
+    <img src="http://i.imgur.com/p8CRm9W.jpg" class="flc" onclick="javascript:tst(2);" />
+<div style="clear:both"></div>
+<hr>
+<p class='fl'>
+    Click the images to set the texture to the plane model.
+</p>
+    
+<p class="fl">
+The width and height of canvas can not be of relative size. See <a href='http://stackoverflow.com/questions/7169879/relatively-sizing-html-canvas'>this reference </a> for more detail.
+</p>
+<p class='fl'>The reference for 1:1 box of relative size is available <a href='http://stackoverflow.com/questions/5445491/height-equal-to-dynamic-width-css-fluid-layout'> here</a>.
+    
+<script src="http://cdnjs.cloudflare.com/ajax/libs/three.js/r70/three.min.js"></script>
+<script src="https://dl.dropboxusercontent.com/u/3587259/Code/Threejs/OrbitControls.js">
+    
 </script>
 
 <script>
 
-var scene, renderer, camera;
-var cube;
-var controls;
+
+var camera, scene, renderer, geometry, material, mesh, light, controls;
+var tex1, tex2;
 
 init();
 animate();
 
-function init()
-{
-	renderer = new THREE.WebGLRenderer( {antialias:true} );
-	var width = window.innerWidth;
-	var height = window.innerHeight;
-	renderer.setSize (width, height);
-	renderer.setClearColor (0x888888);
-	
-	document.body.appendChild (renderer.domElement);
+function init() {
+    var theCanvas = document.getElementById("cnvs");
+    var theCanvasFrame = document.getElementById("cnvsFrame");
 
-	scene = new THREE.Scene();
-	
-	cube = new THREE.Mesh (new THREE.BoxGeometry (20,5,8),
-							new THREE.MeshLambertMaterial ({color: 0x1ec876}));
+    renderer = new THREE.WebGLRenderer({
+        canvas: theCanvas,
+        antialias: true
+    });
+    var ww = theCanvasFrame.clientWidth;
+    var hh = theCanvasFrame.clientHeight;
+    renderer.setSize(ww, hh);
+    renderer.setClearColor(0x222222);
 
-	cube.position.set (75, 0, 0);
-	scene.add (cube);
+    scene = new THREE.Scene();
 
-	camera = new THREE.PerspectiveCamera (45, width/height, 1, 10000);
-	camera.position.y = 160;
-	camera.position.z = 400;
-	camera.lookAt (new THREE.Vector3(0,0,0));
+    camera = new THREE.PerspectiveCamera(50, ww/hh, 1, 1000);
+    camera.position.z = 200;
+    scene.add(camera);
 
-	controls = new THREE.OrbitControls (camera, renderer.domElement);
-	
-	// FLOOR
-	var floorTexture = new THREE.ImageUtils.loadTexture( 'images/myphoto.jpg' );
-	floorTexture.wrapS = floorTexture.wrapT = THREE.RepeatWrapping; 
-	// floorTexture.repeat.set( 4, 4 );
-	var floorMaterial = new THREE.MeshBasicMaterial( { map: floorTexture, side: THREE.DoubleSide } );
-	
-	var floorGeometry = new THREE.PlaneGeometry(150, 150);//, 10, 10);  // not clear what segment does
-	var floor = new THREE.Mesh(floorGeometry, floorMaterial);
-	floor.position.y = -0.5;
-	floor.rotation.x = -Math.PI / 2;
-	scene.add(floor);
-/*
-	var gridXZ = new THREE.GridHelper(100, 10);
-	gridXZ.setColors( new THREE.Color(0xff0000), new THREE.Color(0xffffff) );
-	scene.add(gridXZ);
-*/
-	var pointLight = new THREE.PointLight (0xffffff);
-	pointLight.position.set (0,300,200);
-	scene.add (pointLight);
-	
-	window.addEventListener ('resize', onWindowResize, false);
+    //////////////////////////////////////////////////////
+    THREE.ImageUtils.crossOrigin = '';
+    tex1 = THREE.ImageUtils.loadTexture('http://i.imgur.com/SioC0Bw.png');
+    tex2 = THREE.ImageUtils.loadTexture('http://i.imgur.com/p8CRm9W.jpg');
+    geometry = new THREE.PlaneGeometry(100, 100);
+    material = new THREE.MeshLambertMaterial();
+
+    mesh = new THREE.Mesh(geometry, material);
+    scene.add(mesh);
+
+    light = new THREE.PointLight(0xffffff);
+    light.position.set(100, 300, 200);
+    scene.add(light);
+
+    var gridXZ = new THREE.GridHelper(100, 10);
+    gridXZ.setColors(new THREE.Color(0xff0000), new THREE.Color(0xffffff));
+    scene.add(gridXZ);
+
+    controls = new THREE.OrbitControls(camera, renderer.domElement);
+
+    // the following is not needed for "embed" mode
+    // document.body.appendChild(renderer.domElement);
 }
 
-function onWindowResize ()
-{
-	camera.aspect = window.innerWidth / window.innerHeight;
-	camera.updateProjectionMatrix();
-	renderer.setSize (window.innerWidth, window.innerHeight);
+// remember "no warp in <body>"
+//
+function tst(which) {
+
+    if (which === 1) {
+        //alert("click");
+        mesh.material = new THREE.MeshBasicMaterial({
+            map: tex1,
+            side: THREE.DoubleSide
+        });
+    } else if (which === 2) {
+        mesh.material = new THREE.MeshBasicMaterial({
+            map: tex2,
+            side: THREE.DoubleSide
+        });
+    }
+    // debugger;
 }
 
-function animate()
-{
-controls.update();
-	requestAnimationFrame ( animate );  
-	renderer.render (scene, camera);
+function animate() {
+    controls.update();
+
+    requestAnimationFrame(animate);
+    render();
 }
 
+function render() {
+    renderer.render(scene, camera);
+}
 
 
 </script>
